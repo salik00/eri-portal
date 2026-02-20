@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, Star, TrendingUp, Globe, ChevronDown } from 'lucide-react'
+import FloatingPlane from './FloatingPlane'
 
 const STATS = [
     { value: '5000+', label: 'Students Placed' },
@@ -222,6 +223,10 @@ export default function HeroSection() {
                     <ChevronDown size={20} />
                 </motion.div>
             </motion.div>
+
+            {/* Subtle Plane Animation */}
+            <FloatingPlane className="top-1/4 left-[-10%]" delay={0} />
+            <FloatingPlane className="bottom-1/3 left-[-20%]" delay={10} />
         </section>
     )
 }
