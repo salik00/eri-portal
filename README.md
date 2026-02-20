@@ -49,11 +49,20 @@ npm run start
 
 ## ✨ Features
 - **Public Portal**: Hero section, dynamic countries grid, AI course finder, lead form.
+- **Saathi AI Counselor**: An enterprise-grade AI assistant capable of handling complex education consultancy queries in English and Nepali.
 - **Student Dashboard**: Document vault for uploading Passports and Transcripts.
 - **Admin Dashboard**: Pipeline CRM, Recharts Analytics, and Notification system.
 - **Luxury UI**: Highly animated with Framer Motion, 4K responsive.
 
+## 🤖 Saathi AI Counselor
+Saathi (साथी) is the core intelligence of the ERI Portal.
+- **Multilingual**: Fluent in English, Romanized Nepali, and Mixed "Hinglish" style.
+- **Expertise**: Deep knowledge of visa policies, tuition fees, and admission requirements for Australia, UK, USA, and Canada.
+- **Intelligent Reasoning**: Analyzes student profiles to provide personalized academic roadmaps.
+- **Automated**: Powered by Google Gemini 1.5 with a sophisticated consultancy-specific system prompt.
+
 ## 🛠️ Tech Stack
+- **AI Engine**: Google Gemini 1.5 (via `@google/generative-ai`)
 - **Framework**: Next.js 14
 - **Styling**: Tailwind CSS + Vanilla CSS
 - **Animations**: Framer Motion
