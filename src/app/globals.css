@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+:root {
+  --oxford-blue: #002147;
+  --oxford-blue-light: #0a3a6b;
+  --oxford-blue-dark: #001530;
+  --gold: #C5A059;
+  --gold-light: #d4b47a;
+  --gold-dark: #a07d3a;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+html {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  background: var(--oxford-blue-dark);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--oxford-blue-dark); }
+::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* Selection color */
+::selection { background: var(--gold); color: var(--oxford-blue); }
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-oxford-blue bg-gradient-to-r from-gold to-gold-light hover:from-gold-light hover:to-gold transition-all duration-300 shadow-lg hover:shadow-gold/30 hover:scale-105 active:scale-95;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-gold border-2 border-gold hover:bg-gold hover:text-oxford-blue transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .card-glass {
+    @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl;
+  }
+
+  .card-luxury {
+    @apply bg-gradient-to-br from-oxford-blue-light/80 to-oxford-blue-dark/80 backdrop-blur-sm border border-gold/20 rounded-2xl;
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl font-bold text-white;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .section-subtitle {
+    @apply text-gold font-semibold text-sm uppercase tracking-widest;
+  }
+
+  .input-field {
+    @apply w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/50 transition-all duration-200;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent;
+  }
+}
+
+/* Glow effects */
+.glow-gold {
+  box-shadow: 0 0 30px rgba(197, 160, 89, 0.3);
+}
+
+.glow-blue {
+  box-shadow: 0 0 30px rgba(0, 33, 71, 0.6);
+}
+
+/* Animated gradient border */
+.gradient-border {
+  position: relative;
+  background: linear-gradient(135deg, #002147, #001530);
+  border-radius: 16px;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, #C5A059, #002147, #C5A059);
+  z-index: -1;
+  background-size: 200% 200%;
+  animation: gradientBorder 3s ease infinite;
+}
+
+@keyframes gradientBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Hero particles */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(197, 160, 89, 0.15);
+  animation: floatParticle linear infinite;
+}
+
+@keyframes floatParticle {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100px) scale(1); opacity: 0; }
+}
+
+/* Table styles */
+.admin-table th {
+  @apply text-xs uppercase tracking-wider text-gold/80 font-semibold py-3 px-4 text-left;
+  background: rgba(197, 160, 89, 0.05);
+}
+
+.admin-table td {
+  @apply py-3 px-4 text-sm text-white/80 border-b border-white/5;
+}
+
+.admin-table tr:hover td {
+  background: rgba(255,255,255,0.03);
+}
+
+/* Progress bar */
+.progress-bar {
+  @apply h-2 rounded-full overflow-hidden bg-white/10;
+}
+
+.progress-fill {
+  @apply h-full rounded-full bg-gradient-to-r from-gold-dark to-gold transition-all duration-1000 ease-out;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-15px) rotate(2deg); }
+  66% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
