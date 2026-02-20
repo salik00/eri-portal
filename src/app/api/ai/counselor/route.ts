@@ -112,12 +112,21 @@ export async function POST(req: Request) {
             systemInstruction: SYSTEM_PROMPT
         });
 
-        const chat = model.startChat({
-            history: messages.slice(0, -1).map((msg: any) => ({
+        // Gemini history MUST alternate and start with 'user'.
+        // If the first message is from the bot, we skip it for the history object
+        // but it's already in the model's system instruction context if needed.
+        const history = messages.slice(0, -1)
+            .filter((msg: any, index: number) => {
+                // Ensure first message in history is 'user'
+                if (index === 0 && msg.isBot) return false;
+                return true;
+            })
+            .map((msg: any) => ({
                 role: msg.isBot ? "model" : "user",
                 parts: [{ text: msg.text }],
-            })),
-        });
+            }));
+
+        const chat = model.startChat({ history });
 
         const lastMessage = messages[messages.length - 1].text;
         const result = await chat.sendMessage(lastMessage);
@@ -125,10 +134,13 @@ export async function POST(req: Request) {
         const text = response.text();
 
         return NextResponse.json({ text });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Saathi API Error:", error);
+
+        // Return more specific error message if accessible
+        const errorMessage = error.message || "I'm having a bit of trouble thinking right now.";
         return NextResponse.json(
-            { message: "I'm having a bit of trouble thinking right now. Could you try again in a moment? 😊" },
+            { message: `${errorMessage} Could you try again in a moment? 😊` },
             { status: 500 }
         );
     }
