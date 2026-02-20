@@ -5,7 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import WhatsAppWidget from '@/components/WhatsAppWidget'
-import FAQBot from '@/components/FAQBot'
+import SaathiBot from '@/components/SaathiBot'
 
 export const metadata: Metadata = {
     title: 'Enlightened Research Institute | Overseas Education Consultancy',
@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <main>{children}</main>
                     <Footer />
                     <WhatsAppWidget />
-                    <FAQBot />
+                    <SaathiBot />
                 </AuthProvider>
             </body>
         </html>
