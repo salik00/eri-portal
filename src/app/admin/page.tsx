@@ -1,104 +1,78 @@
 'use client'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Shield, Mail, Lock, Eye, EyeOff, ArrowRight, GraduationCap } from 'lucide-react'
-import { useAuth } from '@/lib/authContext'
-import toast from 'react-hot-toast'
+import { Users, UserPlus, CheckCircle, TrendingUp, CalendarClock, ListTodo } from 'lucide-react'
+import DashboardCharts from '@/components/admin/DashboardCharts'
 
-export default function AdminLoginPage() {
-    const { login, user } = useAuth()
-    const router = useRouter()
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [showPass, setShowPass] = useState(false)
-    const [loading, setLoading] = useState(false)
+// Mock Data for Phase 1 UI build
+const KPIS = [
+    { label: "Today's New Leads", value: '14', icon: UserPlus, trend: '+3 from yesterday', color: 'bg-blue-500' },
+    { label: 'Active Applications', value: '142', icon: Users, trend: '8 pending submission', color: 'bg-emerald-500' },
+    { label: 'Visa Approvals (Dec)', value: '38', icon: CheckCircle, trend: '+12% vs last month', color: 'bg-purple-500' },
+    { label: 'Monthly Revenue', value: 'रु 42.5L', icon: TrendingUp, trend: '85% of target', color: 'bg-gold' },
+    { label: 'Pending Tasks Today', value: '9', icon: ListTodo, trend: '3 overdue', color: 'bg-rose-500' },
+    { label: 'Upcoming Deadlines', value: '12', icon: CalendarClock, trend: 'Next 7 days', color: 'bg-orange-500' },
+]
 
-    useEffect(() => {
-        if (user?.role === 'admin') router.push('/admin/dashboard')
-    }, [user, router])
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
-        const result = await login(email, password)
-        if (result.success) {
-            toast.success('Welcome, Administrator!')
-            router.push('/admin/dashboard')
-        } else {
-            toast.error('Invalid admin credentials')
-        }
-        setLoading(false)
-    }
-
+export default function AdminDashboard() {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-oxford-blue-dark relative overflow-hidden">
-            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(197,160,89,0.05) 0%, transparent 60%)', backgroundSize: 'cover' }} />
-            <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(197,160,89,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(197,160,89,0.3) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
-
-            <motion.div
-                initial={{ y: 30, opacity: 0, scale: 0.98 }}
-                animate={{ y: 0, opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6 }}
-                className="relative z-10 w-full max-w-md px-4"
-            >
-                <div className="text-center mb-8">
-                    <div className="relative inline-block mb-4">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center shadow-2xl shadow-gold/20">
-                            <Shield size={36} className="text-oxford-blue" />
-                        </div>
-                        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-green-400 border-2 border-oxford-blue-dark" />
-                    </div>
-                    <h1 className="text-3xl font-bold text-white" style={{ fontFamily: 'Playfair Display, serif' }}>Admin Portal</h1>
-                    <p className="text-white/40 text-sm mt-1">Enlightened Research Institute</p>
+        <div className="space-y-6">
+            <div className="flex justify-between items-end">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight text-white mb-1">Command Center</h1>
+                    <p className="text-white/60 text-sm">Welcome back. Here's what's happening today.</p>
                 </div>
+                <div className="hidden sm:flex gap-3">
+                    <button className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg text-sm transition-colors border border-white/10">
+                        Download Report
+                    </button>
+                    <button className="bg-gold hover:bg-gold-dark text-oxford-blue font-semibold px-4 py-2 rounded-lg text-sm transition-colors shadow-[0_0_15px_rgba(255,215,0,0.3)]">
+                        + Add New Lead
+                    </button>
+                </div>
+            </div>
 
-                <div className="card-luxury p-8 rounded-3xl border-gold/30">
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div>
-                            <label className="text-white/50 text-xs mb-1.5 flex items-center gap-1"><Mail size={11} /> Admin Email</label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                                className="input-field"
-                                placeholder="admin@enlightened.com"
-                                required
-                            />
+            {/* KPI Cards (Section 1.1) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {KPIS.map((kpi, index) => (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        key={kpi.label}
+                        className="bg-oxford-blue-dark border border-white/5 rounded-xl p-5 hover:border-gold/30 transition-colors group relative overflow-hidden"
+                    >
+                        {/* Background Glow */}
+                        <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-10 blur-2xl group-hover:opacity-20 transition-opacity ${kpi.color}`} />
+
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="p-2.5 rounded-lg bg-black/30 border border-white/10 group-hover:border-gold/40 transition-colors">
+                                <kpi.icon size={20} className="text-white/80 group-hover:text-gold transition-colors" />
+                            </div>
+                            <span className="text-xs font-medium text-white/50 bg-black/20 px-2 py-1 rounded-full border border-white/5">
+                                Real-time
+                            </span>
                         </div>
+
                         <div>
-                            <label className="text-white/50 text-xs mb-1.5 flex items-center gap-1"><Lock size={11} /> Password</label>
-                            <div className="relative">
-                                <input
-                                    type={showPass ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={e => setPassword(e.target.value)}
-                                    className="input-field pr-10"
-                                    placeholder="••••••••••••"
-                                    required
-                                />
-                                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60">
-                                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                                </button>
+                            <div className="text-3xl font-bold text-white mb-1 tracking-tight">{kpi.value}</div>
+                            <div className="text-sm text-white/60 font-medium mb-3">{kpi.label}</div>
+
+                            <div className="flex items-center gap-1.5 text-xs">
+                                <span className={`inline-block w-1.5 h-1.5 rounded-full ${kpi.trend.includes('overdue') ? 'bg-red-500' :
+                                    kpi.trend.includes('+') ? 'bg-emerald-500' : 'bg-gold'
+                                    }`} />
+                                <span className={
+                                    kpi.trend.includes('overdue') ? 'text-red-400' :
+                                        kpi.trend.includes('+') ? 'text-emerald-400' : 'text-gold'
+                                }>{kpi.trend}</span>
                             </div>
                         </div>
+                    </motion.div>
+                ))}
+            </div>
 
-                        <button type="submit" disabled={loading} className="w-full btn-primary justify-center py-4 mt-2">
-                            {loading ? (
-                                <div className="w-4 h-4 border-2 border-oxford-blue/30 border-t-oxford-blue rounded-full animate-spin" />
-                            ) : (
-                                <>Access Admin Panel <ArrowRight size={16} /></>
-                            )}
-                        </button>
-                    </form>
-
-                    <div className="mt-5 pt-5 border-t border-white/5 bg-gold/5 rounded-xl p-4 -mx-2">
-                        <p className="text-xs text-white/30 text-center mb-1">Demo Credentials</p>
-                        <p className="text-xs text-gold text-center font-mono">admin@enlightened.com</p>
-                        <p className="text-xs text-gold text-center font-mono">ERI_Admin_2026</p>
-                    </div>
-                </div>
-            </motion.div>
+            {/* Visual Analytics Widgets */}
+            <DashboardCharts />
         </div>
     )
 }

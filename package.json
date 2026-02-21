@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.97.0",
+    "clsx": "^2.1.1",
     "firebase": "^10.12.2",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.395.0",
@@ -18,7 +21,8 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
-    "recharts": "^2.12.7"
+    "recharts": "^2.15.4",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@types/node": "^20",
