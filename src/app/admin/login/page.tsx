@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+
 import { ShieldCheck, ArrowRight, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -47,10 +47,7 @@ export default function AdminLogin() {
             {/* Background Glows */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[100px] pointer-events-none" />
 
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
+            <div
                 className="w-full max-w-md bg-oxford-blue-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden relative z-10"
             >
                 {/* Header */}
@@ -121,7 +118,7 @@ export default function AdminLogin() {
                         Protected by ERI Auth & Supabase
                     </p>
                 </form>
-            </motion.div>
+            </div>
         </div>
     )
 }

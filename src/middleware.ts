@@ -57,9 +57,13 @@ export async function middleware(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
 
     // Protect all /admin routes except /admin/login
-    if (request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/admin/login')) {
+    const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
+    const isLoginRoute = request.nextUrl.pathname.startsWith('/admin/login')
+
+    if (isAdminRoute && !isLoginRoute) {
         if (!user) {
-            return NextResponse.redirect(new URL('/admin/login', request.url))
+            const redirectUrl = new URL('/admin/login', request.url)
+            return NextResponse.redirect(redirectUrl)
         }
     }
 

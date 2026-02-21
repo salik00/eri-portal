@@ -1,7 +1,11 @@
 'use client'
 import { motion } from 'framer-motion'
+import { usePathname } from 'next/navigation'
 
 export default function WhatsAppWidget() {
+    const pathname = usePathname()
+    if (pathname?.startsWith('/admin')) return null
+
     return (
         <motion.a
             href="https://wa.me/9771XXXXXXXX?text=Hello%20ERI%2C%20I%20would%20like%20to%20inquire%20about%20overseas%20education."

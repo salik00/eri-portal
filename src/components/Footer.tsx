@@ -1,4 +1,6 @@
+'use client'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { GraduationCap, Mail, Phone, MapPin, Facebook, Instagram, Youtube, Twitter } from 'lucide-react'
 
 const FOOTER_COUNTRIES = ['USA', 'UK', 'Australia', 'Canada', 'Denmark', 'New Zealand', 'France', 'Italy', 'China']
@@ -12,6 +14,9 @@ const FOOTER_LINKS = [
 ]
 
 export default function Footer() {
+    const pathname = usePathname()
+    if (pathname?.startsWith('/admin')) return null
+
     return (
         <footer className="bg-oxford-blue-dark border-t border-gold/10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

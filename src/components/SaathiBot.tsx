@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, X, Bot, Send, ChevronDown, User, Sparkles } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
 interface Message {
     id: number
@@ -10,6 +11,7 @@ interface Message {
 }
 
 export default function SaathiBot() {
+    const pathname = usePathname()
     const [open, setOpen] = useState(false)
     const [messages, setMessages] = useState<Message[]>([
         { id: 0, text: "Namaste! Ma Saathi hun — ERI ko AI education counsellor. Tapaaiko study abroad ko kura garau?", isBot: true },
@@ -123,8 +125,8 @@ export default function SaathiBot() {
                                         </div>
                                     )}
                                     <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${msg.isBot
-                                            ? 'bg-oxford-blue border border-gold/5 text-white/90 rounded-tl-none'
-                                            : 'bg-gold text-oxford-blue font-medium rounded-tr-none'
+                                        ? 'bg-oxford-blue border border-gold/5 text-white/90 rounded-tl-none'
+                                        : 'bg-gold text-oxford-blue font-medium rounded-tr-none'
                                         }`}>
                                         {msg.text}
                                     </div>
@@ -172,8 +174,8 @@ export default function SaathiBot() {
                                 onClick={() => handleSend(input)}
                                 disabled={!input.trim() || typing}
                                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${!input.trim() || typing
-                                        ? 'bg-white/5 text-white/20 cursor-not-allowed'
-                                        : 'bg-gold text-oxford-blue hover:bg-gold-light shadow-lg shadow-gold/20'
+                                    ? 'bg-white/5 text-white/20 cursor-not-allowed'
+                                    : 'bg-gold text-oxford-blue hover:bg-gold-light shadow-lg shadow-gold/20'
                                     }`}
                             >
                                 <Send size={18} />

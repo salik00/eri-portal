@@ -27,6 +27,10 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', onScroll)
     }, [])
 
+    if (pathname?.startsWith('/admin')) return null
+
+
+
     return (
         <>
             <motion.nav
@@ -34,8 +38,8 @@ export default function Navbar() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
-                        ? 'bg-oxford-blue-dark/95 backdrop-blur-xl shadow-2xl shadow-black/30 border-b border-gold/10'
-                        : 'bg-transparent'
+                    ? 'bg-oxford-blue-dark/95 backdrop-blur-xl shadow-2xl shadow-black/30 border-b border-gold/10'
+                    : 'bg-transparent'
                     }`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
