@@ -148,10 +148,10 @@ export default function HeroSection() {
 
                         <motion.h1
                             variants={itemVariants}
-                            className="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-8"
+                            className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] mb-8"
                             style={{ fontFamily: 'Playfair Display, serif' }}
                         >
-                            <span className="text-white/40 block text-2xl md:text-3xl mb-4 font-medium tracking-wide">Chase your</span>
+                            <span className="text-xl md:text-2xl mb-4 block font-medium tracking-wide text-white/40">Chase your</span>
                             Elite <span className="gradient-text">Ambition</span>
                             <br />
                             <span className="text-white/90 italic font-serif">Abroad</span>
