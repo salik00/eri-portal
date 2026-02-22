@@ -1,7 +1,10 @@
 'use client'
-import { motion } from 'framer-motion'
-import { Users, UserPlus, CheckCircle, TrendingUp, CalendarClock, ListTodo } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Users, UserPlus, CheckCircle, TrendingUp, CalendarClock, ListTodo, X, Loader2 } from 'lucide-react'
 import DashboardCharts from '@/components/admin/DashboardCharts'
+import { exportToCSV } from '@/utils/csvExport'
+import { useLeads } from '@/hooks/useLeads'
 
 // Mock Data for Phase 1 UI build
 const KPIS = [
@@ -14,6 +17,18 @@ const KPIS = [
 ]
 
 export default function AdminDashboard() {
+    const { leads, createLead } = useLeads()
+    const [showAddLead, setShowAddLead] = useState(false)
+
+    const handleDownloadReport = () => {
+        const reportData = KPIS.map(kpi => ({
+            Metric: kpi.label,
+            Value: kpi.value,
+            Performance: kpi.trend
+        }))
+        exportToCSV(reportData, 'ERI_Dashboard_Summary')
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-end">
@@ -22,10 +37,16 @@ export default function AdminDashboard() {
                     <p className="text-white/60 text-sm">Welcome back. Here's what's happening today.</p>
                 </div>
                 <div className="hidden sm:flex gap-3">
-                    <button className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg text-sm transition-colors border border-white/10">
+                    <button
+                        onClick={handleDownloadReport}
+                        className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg text-sm transition-colors border border-white/10"
+                    >
                         Download Report
                     </button>
-                    <button className="bg-gold hover:bg-gold-dark text-oxford-blue font-semibold px-4 py-2 rounded-lg text-sm transition-colors shadow-[0_0_15px_rgba(255,215,0,0.3)]">
+                    <button
+                        onClick={() => setShowAddLead(true)}
+                        className="bg-gold hover:bg-gold-dark text-oxford-blue font-semibold px-4 py-2 rounded-lg text-sm transition-colors shadow-[0_0_15px_rgba(255,215,0,0.3)]"
+                    >
                         + Add New Lead
                     </button>
                 </div>
@@ -73,6 +94,86 @@ export default function AdminDashboard() {
 
             {/* Visual Analytics Widgets */}
             <DashboardCharts />
+
+            <AnimatePresence>
+                {showAddLead && (
+                    <AddLeadModal
+                        onClose={() => setShowAddLead(false)}
+                        onAdd={async (data) => {
+                            await createLead(data)
+                            setShowAddLead(false)
+                        }}
+                    />
+                )}
+            </AnimatePresence>
+        </div>
+    )
+}
+
+function AddLeadModal({ onClose, onAdd }: { onClose: () => void, onAdd: (data: any) => Promise<void> }) {
+    const [form, setForm] = useState({ first_name: '', last_name: '', email: '', phone: '', country: 'Australia' })
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const handleSubmit = async () => {
+        setIsSubmitting(true)
+        await onAdd(form)
+        setIsSubmitting(false)
+    }
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-oxford-blue/90 backdrop-blur-md" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-oxford-blue-dark border border-white/10 p-8 rounded-[2rem] w-full max-w-md relative z-10 shadow-2xl">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold text-white">Capture New Lead</h2>
+                    <button onClick={onClose} className="text-white/20 hover:text-white"><X size={20} /></button>
+                </div>
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <input
+                            placeholder="First Name"
+                            value={form.first_name}
+                            onChange={(e) => setForm({ ...form, first_name: e.target.value })}
+                            className="bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-gold/50 outline-none"
+                        />
+                        <input
+                            placeholder="Last Name"
+                            value={form.last_name}
+                            onChange={(e) => setForm({ ...form, last_name: e.target.value })}
+                            className="bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-gold/50 outline-none"
+                        />
+                    </div>
+                    <input
+                        placeholder="Email Address"
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-gold/50 outline-none"
+                    />
+                    <input
+                        placeholder="Phone Number"
+                        value={form.phone}
+                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-gold/50 outline-none"
+                    />
+                    <select
+                        value={form.country}
+                        onChange={(e) => setForm({ ...form, country: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-gold/50 outline-none appearance-none"
+                    >
+                        <option value="Australia">Australia</option>
+                        <option value="Canada">Canada</option>
+                        <option value="USA">USA</option>
+                        <option value="UK">UK</option>
+                    </select>
+                </div>
+                <button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    className="w-full bg-gold text-oxford-blue font-bold py-3 rounded-xl mt-8 shadow-lg shadow-gold/10 flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                    {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : 'Save Lead'}
+                </button>
+            </motion.div>
         </div>
     )
 }

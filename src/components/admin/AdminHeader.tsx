@@ -1,12 +1,28 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { Bell, Search, Menu } from 'lucide-react'
+import { createClient } from '@/utils/supabase/client'
 
-export default function AdminHeader() {
+export default function AdminHeader({ onMenuClick }: { onMenuClick?: () => void }) {
+    const [userEmail, setUserEmail] = useState<string | null>(null)
+    const supabase = createClient()
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) setUserEmail(user.email || 'Admin User')
+        }
+        getUser()
+    }, [])
+
     return (
         <header className="h-16 bg-oxford-blue border-b border-white/5 flex items-center justify-between px-6 sticky top-0 z-10 backdrop-blur-md bg-opacity-90">
             {/* Left Box: Mobile Menu & Search */}
             <div className="flex items-center gap-4 flex-1">
-                <button className="md:hidden text-white/70 hover:text-white transition-colors">
+                <button
+                    onClick={onMenuClick}
+                    className="md:hidden text-white/70 hover:text-white transition-colors"
+                >
                     <Menu size={24} />
                 </button>
 
@@ -29,11 +45,11 @@ export default function AdminHeader() {
 
                 <div className="flex items-center gap-3 pl-6 border-l border-white/10">
                     <div className="text-right hidden sm:block">
-                        <div className="text-sm font-semibold text-white">Admin User</div>
+                        <div className="text-sm font-semibold text-white">{userEmail || 'Admin User'}</div>
                         <div className="text-xs text-gold">Super Admin</div>
                     </div>
                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold to-gold-dark border border-gold/30 flex items-center justify-center text-oxford-blue font-bold shadow-lg">
-                        A
+                        {userEmail ? userEmail.charAt(0).toUpperCase() : 'A'}
                     </div>
                 </div>
             </div>

@@ -13,6 +13,7 @@ export interface Country {
     processingTime: string
     popularCourses: string[]
     color: string
+    isoCode: string
 }
 
 export interface University {
@@ -59,6 +60,7 @@ export const COUNTRIES: Country[] = [
         description: 'Home to world-renowned Ivy League universities and cutting-edge research facilities. The USA offers unmatched academic diversity and career opportunities.',
         color: '#B22234',
         popularCourses: ['Computer Science', 'MBA', 'Engineering', 'Medicine', 'Law'],
+        isoCode: 'us',
         visaProcess: [
             'Receive university acceptance letter',
             'Pay SEVIS fee ($350)',
@@ -85,6 +87,7 @@ export const COUNTRIES: Country[] = [
         description: 'The UK hosts Oxford, Cambridge, and Imperial College — institutions that have shaped global thought for centuries. Shorter degree programs mean faster ROI.',
         color: '#CF142B',
         popularCourses: ['Business', 'Law', 'Medicine', 'Finance', 'Arts'],
+        isoCode: 'gb',
         visaProcess: [
             'Receive CAS (Confirmation of Acceptance for Studies)',
             'Apply for Student Visa online',
@@ -111,6 +114,7 @@ export const COUNTRIES: Country[] = [
         description: 'Australia combines world-class education with an enviable lifestyle. Its post-study work rights (up to 4 years) make it a top destination for career-focused students.',
         color: '#00008B',
         popularCourses: ['Engineering', 'IT', 'Nursing', 'Business', 'Environmental Science'],
+        isoCode: 'au',
         visaProcess: [
             'Receive CoE (Confirmation of Enrolment)',
             'Meet GTE (Genuine Temporary Entrant) requirement',
@@ -137,6 +141,7 @@ export const COUNTRIES: Country[] = [
         description: 'Canada offers affordable tuition, a welcoming immigration policy, and a path to Permanent Residency. It\'s one of the safest and most multicultural nations on earth.',
         color: '#FF0000',
         popularCourses: ['IT', 'Business Analytics', 'Healthcare', 'Engineering', 'Finance'],
+        isoCode: 'ca',
         visaProcess: [
             'Receive Letter of Acceptance from Canadian institution',
             'Apply for Study Permit online or at embassy',
@@ -163,6 +168,7 @@ export const COUNTRIES: Country[] = [
         description: 'Denmark leads in innovation, sustainability, and quality of life. Many programs are taught in English, and the country is famous for its work-life balance culture.',
         color: '#C60C30',
         popularCourses: ['Sustainable Energy', 'IT', 'Design', 'Architecture', 'Business'],
+        isoCode: 'dk',
         visaProcess: [
             'Receive university admission letter',
             'Apply for Residence Permit for studies',
@@ -189,6 +195,7 @@ export const COUNTRIES: Country[] = [
         description: 'New Zealand offers a safe, friendly environment with world-class universities. Students enjoy the scenery, outdoor lifestyle, and strong post-study work opportunities.',
         color: '#00247D',
         popularCourses: ['Agriculture', 'Tourism', 'Engineering', 'Business', 'IT'],
+        isoCode: 'nz',
         visaProcess: [
             'Receive Offer of Place from NZ institution',
             'Apply for Student Visa online',
@@ -215,6 +222,7 @@ export const COUNTRIES: Country[] = [
         description: 'France offers some of the most affordable quality education in Europe. The Grandes Écoles are globally recognized for business and engineering. Paris is the cultural capital of the world.',
         color: '#002395',
         popularCourses: ['Fashion Design', 'Culinary Arts', 'Business', 'Engineering', 'Fine Arts'],
+        isoCode: 'fr',
         visaProcess: [
             'Apply through Campus France platform',
             'Receive pre-acceptance from university',
@@ -241,6 +249,7 @@ export const COUNTRIES: Country[] = [
         description: 'Italy offers centuries of academic tradition, incredible culture, and some of Europe\'s most affordable tuition fees. Fashion, architecture, and the arts thrive here.',
         color: '#009246',
         popularCourses: ['Architecture', 'Fashion Design', 'Fine Arts', 'Engineering', 'Gastronomy'],
+        isoCode: 'it',
         visaProcess: [
             'Receive university enrollment confirmation',
             'Apply for pre-enrollment at Italian consulate',
@@ -267,6 +276,7 @@ export const COUNTRIES: Country[] = [
         description: 'China is the fastest-growing higher education market. Government scholarships cover full tuition + accommodation + stipend. Studying in China opens doors to the world\'s largest economy.',
         color: '#DE2910',
         popularCourses: ['Medicine (MBBS)', 'Engineering', 'Business', 'Chinese Language', 'Technology'],
+        isoCode: 'cn',
         visaProcess: [
             'Apply to Chinese university directly or via China Study Abroad portal',
             'Receive JW201/JW202 scholarship form and admission notice',

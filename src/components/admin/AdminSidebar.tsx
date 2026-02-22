@@ -1,25 +1,39 @@
 'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, FileText, PlaneTakeoff, CreditCard, Landmark, Settings, LogOut, ChevronRight } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import {
+    LayoutDashboard, Users, FileText,
+    PlaneTakeoff, CreditCard, Landmark,
+    Settings, LogOut, ChevronRight, FileCheck, X
+} from 'lucide-react'
+import { createClient } from '@/utils/supabase/client'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const NAV_ITEMS = [
     { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { label: 'Student CRM', href: '/admin/students', icon: Users },
     { label: 'Lead Pipeline', href: '/admin/leads', icon: FileText },
+    { label: 'Verification', href: '/admin/verification', icon: FileCheck },
     { label: 'Visa Tracking', href: '/admin/visas', icon: PlaneTakeoff },
     { label: 'Finance', href: '/admin/finance', icon: CreditCard },
     { label: 'Universities', href: '/admin/universities', icon: Landmark },
     { label: 'Settings', href: '/admin/settings', icon: Settings },
 ]
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean, setMobileOpen?: (open: boolean) => void }) {
     const pathname = usePathname()
+    const router = useRouter()
+    const supabase = createClient()
 
-    return (
-        <aside className="w-64 bg-oxford-blue-dark border-r border-white/10 h-screen flex flex-col hidden md:flex sticky top-0">
+    const handleLogout = async () => {
+        await supabase.auth.signOut()
+        window.location.href = '/admin/login'
+    }
+
+    const SidebarContent = () => (
+        <div className="flex flex-col h-full">
             {/* Logo Area */}
-            <div className="p-6 border-b border-white/5">
+            <div className="p-6 border-b border-white/5 flex justify-between items-center">
                 <Link href="/admin" className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-gold flex items-center justify-center font-bold text-oxford-blue">
                         E
@@ -29,6 +43,11 @@ export default function AdminSidebar() {
                         <div className="text-[10px] text-gold uppercase tracking-widest font-semibold">Command Center</div>
                     </div>
                 </Link>
+                {mobileOpen && (
+                    <button onClick={() => setMobileOpen?.(false)} className="md:hidden text-white/40 hover:text-white">
+                        <X size={20} />
+                    </button>
+                )}
             </div>
 
             {/* Navigation */}
@@ -40,9 +59,10 @@ export default function AdminSidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
+                            onClick={() => setMobileOpen?.(false)}
                             className={`flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
-                                    ? 'bg-gold/10 text-gold font-medium'
-                                    : 'text-white/60 hover:bg-white/5 hover:text-white'
+                                ? 'bg-gold/10 text-gold font-medium'
+                                : 'text-white/60 hover:bg-white/5 hover:text-white'
                                 }`}
                         >
                             <div className="flex items-center gap-3">
@@ -57,11 +77,47 @@ export default function AdminSidebar() {
 
             {/* User Area / Logout */}
             <div className="p-4 border-t border-white/5">
-                <button className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-white/60 hover:bg-red-500/10 hover:text-red-400 transition-colors text-sm">
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-white/60 hover:bg-red-500/10 hover:text-red-400 transition-colors text-sm"
+                >
                     <LogOut size={18} />
                     <span>Sign Out</span>
                 </button>
             </div>
-        </aside>
+        </div>
+    )
+
+    return (
+        <>
+            {/* Desktop Sidebar */}
+            <aside className="w-64 bg-oxford-blue-dark border-r border-white/10 h-screen hidden md:flex flex-col sticky top-0">
+                <SidebarContent />
+            </aside>
+
+            {/* Mobile Sidebar (Drawer) */}
+            <AnimatePresence>
+                {mobileOpen && (
+                    <div className="fixed inset-0 z-[1000] md:hidden">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setMobileOpen?.(false)}
+                            className="absolute inset-0 bg-oxford-blue/90 backdrop-blur-md"
+                        />
+                        <motion.aside
+                            initial={{ x: '-100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '-100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                            className="absolute top-0 left-0 bottom-0 w-72 bg-oxford-blue-dark border-r border-white/10 shadow-2xl"
+                        >
+                            <SidebarContent />
+                        </motion.aside>
+                    </div>
+                )}
+            </AnimatePresence>
+        </>
     )
 }

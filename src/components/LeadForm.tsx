@@ -5,6 +5,7 @@ import { Send, User, Mail, Phone, Globe, Wallet, MessageSquare, CheckCircle } fr
 import toast from 'react-hot-toast'
 import { triggerNewLeadNotification } from '@/lib/notifications'
 import { COUNTRIES } from '@/lib/mockData'
+import { createClient } from '@/utils/supabase/client'
 
 interface FormData {
     name: string; email: string; phone: string
@@ -14,6 +15,7 @@ interface FormData {
 const BUDGETS = ['Under $15,000', '$15,000 - $25,000', '$25,000 - $40,000', '$40,000 - $60,000', 'Over $60,000']
 
 export default function LeadForm() {
+    const supabase = createClient()
     const [form, setForm] = useState<FormData>({ name: '', email: '', phone: '', country: '', budget: '', message: '' })
     const [submitted, setSubmitted] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -29,16 +31,35 @@ export default function LeadForm() {
             return
         }
         setLoading(true)
-        await new Promise(r => setTimeout(r, 1200))
 
-        // Save to localStorage (demo mode)
-        const leads = JSON.parse(localStorage.getItem('eri_leads') || '[]')
-        leads.push({ ...form, id: `lead-${Date.now()}`, status: 'inquiry', createdAt: new Date().toISOString() })
-        localStorage.setItem('eri_leads', JSON.stringify(leads))
+        try {
+            // Split name into first and last
+            const nameParts = form.name.trim().split(' ')
+            const firstName = nameParts[0]
+            const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '.'
 
-        triggerNewLeadNotification(form.name, form.country)
-        setSubmitted(true)
-        setLoading(false)
+            const { error } = await supabase.from('leads').insert({
+                first_name: firstName,
+                last_name: lastName,
+                email: form.email,
+                phone: form.phone,
+                country: form.country,
+                budget: form.budget,
+                message: form.message,
+                status: 'new',
+                source: 'Landing Page'
+            })
+
+            if (error) throw error
+
+            triggerNewLeadNotification(form.name, form.country)
+            setSubmitted(true)
+        } catch (error: any) {
+            console.error('Lead submission error:', error)
+            toast.error('Failed to submit inquiry. Please try again or contact us directly.')
+        } finally {
+            setLoading(false)
+        }
     }
 
     if (submitted) {
@@ -127,7 +148,19 @@ export default function LeadForm() {
                                 <input name="phone" value={form.phone} onChange={handleChange} className="input-field" placeholder="+977-98XXXXXXXX" required />
                             </div>
                             <div>
-                                <label className="text-white/50 text-xs mb-1.5 flex items-center gap-1"><Globe size={11} /> Country of Interest *</label>
+                                <label className="text-white/50 text-xs mb-1.5 flex items-center justify-between gap-1">
+                                    <span className="flex items-center gap-1"><Globe size={11} /> Country of Interest *</span>
+                                    {form.country && (
+                                        <motion.img
+                                            initial={{ opacity: 0, scale: 0.5 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            key={form.country}
+                                            src={`https://flagcdn.com/w40/${COUNTRIES.find(c => c.name === form.country)?.isoCode || 'un'}.png`}
+                                            className="w-5 h-3.5 object-cover rounded shadow-sm"
+                                            alt=""
+                                        />
+                                    )}
+                                </label>
                                 <select name="country" value={form.country} onChange={handleChange} className="input-field" required>
                                     <option value="">Select destination</option>
                                     {COUNTRIES.map(c => <option key={c.slug} value={c.name}>{c.flag} {c.name}</option>)}

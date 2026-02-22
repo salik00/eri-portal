@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import { ShieldCheck, ArrowRight, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { login } from './actions'
 
 export default function AdminLogin() {
     const router = useRouter()
@@ -16,28 +17,24 @@ export default function AdminLogin() {
         setIsLoading(true)
         setError('')
 
-        // Perform actual Auth via API route to set cookies securely
         try {
             const formData = new FormData()
             formData.append('email', email)
             formData.append('password', password)
 
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                body: formData,
-            })
+            const result = await login(formData)
 
-            const result = await response.json()
-
-            if (response.ok) {
-                router.push('/admin')
-                router.refresh()
-            } else {
-                setError(result.error || 'Invalid credentials or access denied.')
-                setIsLoading(false)
+            if (result?.error) {
+                throw new Error(result.error)
             }
-        } catch (err) {
-            setError('System error. Please contact IT support.')
+
+            // Successfully logged in via Server Action.
+            // Next.js middleware will now recognize the session.
+            // Using window.location.href for a clean state reset.
+            window.location.href = '/admin'
+        } catch (err: any) {
+            console.error('Login error:', err)
+            setError(err.message || 'Invalid credentials or access denied.')
             setIsLoading(false)
         }
     }

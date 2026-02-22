@@ -1,145 +1,196 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, User, Eye, EyeOff, GraduationCap, ArrowRight } from 'lucide-react'
-import { useAuth } from '@/lib/authContext'
-import toast from 'react-hot-toast'
+import { GraduationCap, ShieldCheck, Mail, Lock, ArrowRight, Loader2, UserPlus, CheckCircle } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { login, signup } from './actions'
+import Link from 'next/link'
 
-function AuthForm() {
-    const searchParams = useSearchParams()
+export default function AuthPage() {
     const router = useRouter()
-    const { login, register, user } = useAuth()
-    const [tab, setTab] = useState<'login' | 'register'>(
-        searchParams.get('tab') === 'register' ? 'register' : 'login'
-    )
-    const [form, setForm] = useState({ name: '', email: '', password: '' })
-    const [showPass, setShowPass] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const searchParams = useSearchParams()
+    const initialTab = searchParams.get('tab') === 'register' ? 'register' : 'login'
 
-    useEffect(() => {
-        if (user) router.push(user.role === 'admin' ? '/admin/dashboard' : '/dashboard')
-    }, [user, router])
+    const [tab, setTab] = useState<'login' | 'register'>(initialTab)
+    const [userType, setUserType] = useState<'student' | 'admin'>('student')
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState('')
+    const [message, setMessage] = useState('')
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
-    }
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+        fullName: ''
+    })
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault()
-        setLoading(true)
-        if (tab === 'login') {
-            const result = await login(form.email, form.password)
-            if (result.success) {
-                toast.success('Welcome back!')
+        setIsLoading(true)
+        setError('')
+        setMessage('')
+
+        try {
+            const data = new FormData()
+            data.append('email', formData.email)
+            data.append('password', formData.password)
+            if (tab === 'register') data.append('fullName', formData.fullName)
+
+            if (tab === 'login') {
+                const result = await login(data)
+                if (result?.error) throw new Error(result.error)
+
+                // Redirect based on type
+                if (userType === 'admin') window.location.href = '/admin'
+                else window.location.href = '/student/dashboard'
             } else {
-                toast.error(result.error || 'Login failed')
+                const result = await signup(data)
+                if (result?.error) throw new Error(result.error)
+                setMessage('Registration successful! Please check your email for verification.')
+                setTab('login')
             }
-        } else {
-            if (!form.name) { toast.error('Please enter your name'); setLoading(false); return }
-            if (form.password.length < 6) { toast.error('Password must be at least 6 characters'); setLoading(false); return }
-            const result = await register(form.name, form.email, form.password)
-            if (result.success) {
-                toast.success('Account created! Welcome to ERI 🎓')
-            } else {
-                toast.error(result.error || 'Registration failed')
-            }
+        } catch (err: any) {
+            setError(err.message || 'Authentication failed. Please try again.')
+        } finally {
+            setIsLoading(false)
         }
-        setLoading(false)
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center pt-20 pb-12 bg-gradient-oxford relative overflow-hidden">
-            <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle, #C5A059 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-            <div className="absolute top-1/4 -right-32 w-96 h-96 rounded-full bg-gold/10 blur-3xl" />
+        <div className="min-h-screen bg-oxford-blue flex items-center justify-center p-4 relative overflow-hidden">
+            {/* Dynamic Background */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-1/4 -right-20 w-80 h-80 bg-gold/10 rounded-full blur-[100px] animate-pulse" />
+                <div className="absolute bottom-1/4 -left-20 w-60 h-60 bg-oxford-blue-light/40 rounded-full blur-[100px]" />
+            </div>
 
             <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="relative z-10 w-full max-w-md px-4"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="w-full max-w-lg bg-oxford-blue-dark/50 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden"
             >
-                {/* Logo */}
-                <div className="text-center mb-8">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center mx-auto mb-4 shadow-xl">
-                        <GraduationCap size={32} className="text-oxford-blue" />
-                    </div>
-                    <h1 className="text-3xl font-bold text-white" style={{ fontFamily: 'Playfair Display, serif' }}>
-                        {tab === 'login' ? 'Welcome Back' : 'Join ERI'}
-                    </h1>
-                    <p className="text-white/50 mt-2 text-sm">
-                        {tab === 'login' ? 'Sign in to your student portal' : 'Start your overseas education journey'}
-                    </p>
+                {/* Branding */}
+                <div className="p-8 pb-4 text-center">
+                    <Link href="/" className="inline-flex items-center gap-3 mb-6 group">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <GraduationCap size={28} className="text-oxford-blue" />
+                        </div>
+                        <div className="text-left">
+                            <div className="font-bold text-white text-lg leading-tight" style={{ fontFamily: 'Playfair Display, serif' }}>Enlightened</div>
+                            <div className="text-gold text-[10px] font-bold tracking-widest uppercase">Research Institute</div>
+                        </div>
+                    </Link>
+                    <h2 className="text-2xl font-bold text-white mb-2">Welcome Back</h2>
+                    <p className="text-white/40 text-sm">Nepal&apos;s Elite Education Consultancy Portal</p>
                 </div>
 
                 {/* Tabs */}
-                <div className="flex bg-white/5 rounded-2xl p-1 mb-6 border border-white/10">
-                    {(['login', 'register'] as const).map((t) => (
-                        <button
-                            key={t}
-                            onClick={() => setTab(t)}
-                            className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${tab === t ? 'bg-gold text-oxford-blue shadow-lg' : 'text-white/50 hover:text-white'
-                                }`}
-                        >
-                            {t === 'login' ? 'Sign In' : 'Register'}
-                        </button>
-                    ))}
+                <div className="px-8 flex gap-2">
+                    <button
+                        onClick={() => setTab('login')}
+                        className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider rounded-2xl transition-all ${tab === 'login' ? 'bg-gold text-oxford-blue' : 'text-white/40 hover:bg-white/5'}`}
+                    >
+                        Sign In
+                    </button>
+                    <button
+                        onClick={() => setTab('register')}
+                        className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider rounded-2xl transition-all ${tab === 'register' ? 'bg-gold text-oxford-blue' : 'text-white/40 hover:bg-white/5'}`}
+                    >
+                        Register
+                    </button>
                 </div>
 
-                {/* Form */}
-                <div className="card-luxury p-8 rounded-3xl border-gold/20">
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <AnimatePresence>
-                            {tab === 'register' && (
-                                <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                >
-                                    <label className="text-white/50 text-xs mb-1.5 flex items-center gap-1"><User size={11} /> Full Name</label>
-                                    <input name="name" value={form.name} onChange={handleChange} className="input-field" placeholder="Your full name" />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <div>
-                            <label className="text-white/50 text-xs mb-1.5 flex items-center gap-1"><Mail size={11} /> Email Address</label>
-                            <input name="email" type="email" value={form.email} onChange={handleChange} className="input-field" placeholder="you@example.com" required />
-                        </div>
-
-                        <div>
-                            <label className="text-white/50 text-xs mb-1.5 flex items-center gap-1"><Lock size={11} /> Password</label>
-                            <div className="relative">
-                                <input name="password" type={showPass ? 'text' : 'password'} value={form.password} onChange={handleChange} className="input-field pr-10" placeholder="••••••••" required />
-                                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60">
-                                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <button type="submit" disabled={loading} className="w-full btn-primary justify-center py-3.5 mt-2">
-                            {loading ? (
-                                <div className="w-4 h-4 border-2 border-oxford-blue/30 border-t-oxford-blue rounded-full animate-spin" />
-                            ) : (
-                                <>{tab === 'login' ? 'Sign In' : 'Create Account'} <ArrowRight size={16} /></>
-                            )}
-                        </button>
-                    </form>
-
+                <form onSubmit={handleAuth} className="p-8 pt-6 space-y-6">
+                    {/* User Type Toggle (Login Only) */}
                     {tab === 'login' && (
-                        <div className="mt-4 pt-4 border-t border-white/5 text-center">
-                            <p className="text-white/30 text-xs">Admin? Use <span className="text-gold">admin@enlightened.com</span></p>
+                        <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/5">
+                            <button
+                                type="button"
+                                onClick={() => setUserType('student')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-xl transition-all ${userType === 'student' ? 'bg-white/10 text-white shadow-xl' : 'text-white/40'}`}
+                            >
+                                <GraduationCap size={14} /> Student Access
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setUserType('admin')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-xl transition-all ${userType === 'admin' ? 'bg-white/10 text-white shadow-xl' : 'text-white/40'}`}
+                            >
+                                <ShieldCheck size={14} /> Administration
+                            </button>
                         </div>
                     )}
-                </div>
+
+                    <div className="space-y-4">
+                        {error && (
+                            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-red-500/10 border border-red-500/20 p-3 rounded-xl text-red-400 text-xs text-center">
+                                {error}
+                            </motion.div>
+                        )}
+                        {message && (
+                            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-xl text-emerald-400 text-xs text-center flex items-center justify-center gap-2">
+                                <CheckCircle size={14} /> {message}
+                            </motion.div>
+                        )}
+
+                        {tab === 'register' && (
+                            <div className="relative">
+                                <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                                <input
+                                    name="fullName"
+                                    type="text"
+                                    placeholder="Full Name"
+                                    required
+                                    value={formData.fullName}
+                                    onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:border-gold/50 outline-none transition-all"
+                                />
+                            </div>
+                        )}
+
+                        <div className="relative">
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                            <input
+                                name="email"
+                                type="email"
+                                placeholder="Email Address"
+                                required
+                                value={formData.email}
+                                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:border-gold/50 outline-none transition-all"
+                            />
+                        </div>
+
+                        <div className="relative">
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                            <input
+                                name="password"
+                                type="password"
+                                placeholder="Security Token / Password"
+                                required
+                                value={formData.password}
+                                onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:border-gold/50 outline-none transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full bg-gold hover:bg-gold-dark text-oxford-blue font-black py-4 rounded-2xl shadow-2xl shadow-gold/10 flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+                    >
+                        {isLoading ? (
+                            <><Loader2 className="animate-spin" size={20} /> Authenticating...</>
+                        ) : (
+                            <>{tab === 'login' ? 'Enter Portal' : 'Create Account'} <ArrowRight size={20} /></>
+                        )}
+                    </button>
+
+                    <p className="text-center text-xs text-white/20 pt-4">
+                        Secure connection via Supabase Auth & ERI Shield
+                    </p>
+                </form>
             </motion.div>
         </div>
-    )
-}
-
-export default function AuthPage() {
-    return (
-        <Suspense>
-            <AuthForm />
-        </Suspense>
     )
 }

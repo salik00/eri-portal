@@ -32,13 +32,29 @@ body {
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--oxford-blue-dark); }
-::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--oxford-blue-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
 
 /* Selection color */
-::selection { background: var(--gold); color: var(--oxford-blue); }
+::selection {
+  background: var(--gold);
+  color: var(--oxford-blue);
+}
 
 @layer components {
   .btn-primary {
@@ -107,9 +123,17 @@ body {
 }
 
 @keyframes gradientBorder {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Hero particles */
@@ -121,10 +145,23 @@ body {
 }
 
 @keyframes floatParticle {
-  0% { transform: translateY(100vh) scale(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(-100px) scale(1); opacity: 0; }
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-100px) scale(1);
+    opacity: 0;
+  }
 }
 
 /* Table styles */
@@ -138,7 +175,7 @@ body {
 }
 
 .admin-table tr:hover td {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* Progress bar */
@@ -152,11 +189,46 @@ body {
 
 /* Floating animation */
 @keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-15px) rotate(2deg); }
-  66% { transform: translateY(-8px) rotate(-1deg); }
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  33% {
+    transform: translateY(-30px) rotate(3deg);
+  }
+
+  66% {
+    transform: translateY(-15px) rotate(-2deg);
+  }
 }
 
 .float-animation {
-  animation: float 6s ease-in-out infinite;
+  animation: float 8s ease-in-out infinite;
+}
+
+/* Pulsing gold for buttons */
+@keyframes pulse-gold {
+
+  0%,
+  100% {
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(197, 160, 89, 0.8);
+  }
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 3s infinite;
+}
+
+/* Glass card enhancement */
+.glass-premium {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }

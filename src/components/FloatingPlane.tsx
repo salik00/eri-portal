@@ -21,8 +21,10 @@ export default function FloatingPlane({ className = "", delay = 0 }: { className
             className={`absolute pointer-events-none z-0 ${className}`}
         >
             <div className="relative group">
-                <Plane size={24} className="text-gold/20 fill-gold/5" />
-                <div className="absolute top-1/2 left-0 w-20 h-[1px] bg-gradient-to-r from-transparent to-gold/20 -translate-x-full" />
+                <Plane size={64} className="text-gold/30 fill-gold/10 drop-shadow-[0_0_15px_rgba(197,160,89,0.3)]" />
+                {/* Shimmering Trail */}
+                <div className="absolute top-1/2 left-0 w-48 h-[2px] bg-gradient-to-r from-transparent via-gold/40 to-gold/10 -translate-x-full blur-[1px]" />
+                <div className="absolute top-1/2 left-0 w-32 h-[1px] bg-gold/20 -translate-x-full blur-[2px] animate-pulse" />
             </div>
         </motion.div>
     )

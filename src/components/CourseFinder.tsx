@@ -66,8 +66,14 @@ export default function CourseFinder() {
                                 onChange={e => setSelectedCountry(e.target.value)}
                                 className="input-field pl-12 appearance-none w-full"
                             >
-                                <option value="All">All Countries</option>
-                                {countries.map(c => <option key={c} value={c}>{c}</option>)}
+                                <option value="All">🌍 All Countries</option>
+                                <option value="USA">🇺🇸 USA</option>
+                                <option value="UK">🇬🇧 UK</option>
+                                <option value="Australia">🇦🇺 Australia</option>
+                                <option value="Canada">🇨🇦 Canada</option>
+                                <option value="China">🇨🇳 China</option>
+                                <option value="Ireland">🇮🇪 Ireland</option>
+                                <option value="New Zealand">🇳🇿 New Zealand</option>
                             </select>
                         </div>
                         <button type="submit" className="btn-primary justify-center w-full">
@@ -100,7 +106,20 @@ export default function CourseFinder() {
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                                         <div className="absolute top-4 left-4 flex gap-2">
-                                            <span className="bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg text-lg">{uni.flag}</span>
+                                            <img
+                                                src={`https://flagcdn.com/w80/${uni.country === 'Australia' ? 'au' :
+                                                        uni.country === 'USA' ? 'us' :
+                                                            uni.country === 'UK' ? 'gb' :
+                                                                uni.country === 'Canada' ? 'ca' :
+                                                                    uni.country === 'China' ? 'cn' :
+                                                                        uni.country === 'Ireland' ? 'ie' :
+                                                                            uni.country === 'New Zealand' ? 'nz' :
+                                                                                uni.country === 'Germany' ? 'de' :
+                                                                                    uni.country === 'Japan' ? 'jp' : 'un'
+                                                    }.png`}
+                                                className="w-10 h-6 object-cover rounded shadow-2xl border border-white/10"
+                                                alt={uni.country}
+                                            />
                                         </div>
                                         <div className="absolute bottom-4 left-4 right-4">
                                             <h4 className="text-white font-bold leading-tight line-clamp-2">{uni.name}</h4>

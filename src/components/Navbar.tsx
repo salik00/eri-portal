@@ -101,7 +101,7 @@ export default function Navbar() {
                                                 className="absolute right-0 mt-2 w-48 bg-oxford-blue-dark border border-white/10 rounded-xl shadow-2xl overflow-hidden"
                                             >
                                                 {user.role === 'student' && (
-                                                    <Link href="/dashboard" className="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-colors">
+                                                    <Link href="/student/dashboard" className="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-colors">
                                                         <User size={14} className="text-gold" /> Document Vault
                                                     </Link>
                                                 )}

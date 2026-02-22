@@ -24,12 +24,23 @@ function CountryCard({ country, index }: { country: typeof COUNTRIES[0]; index: 
                     <div className="absolute inset-0 bg-gradient-to-br from-gold/0 to-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                     {/* Flag & Country name */}
-                    <div className="flex items-start justify-between mb-5">
-                        <div>
-                            <div className="text-4xl mb-2">{country.flag}</div>
-                            <h3 className="text-white font-bold text-xl" style={{ fontFamily: 'Playfair Display, serif' }}>{country.name}</h3>
+                    <div className="flex items-start justify-between mb-5 relative">
+                        {/* Decorative 'Onside' Watermark Flag */}
+                        <img
+                            src={`https://flagcdn.com/w160/${country.isoCode}.png`}
+                            className="absolute -right-2 -top-2 w-24 opacity-5 blur-[1px] group-hover:opacity-10 transition-opacity pointer-events-none"
+                            alt=""
+                        />
+
+                        <div className="flex items-center gap-4 relative z-10">
+                            <img
+                                src={`https://flagcdn.com/w80/${country.isoCode}.png`}
+                                className="w-12 h-8 object-cover rounded shadow-lg group-hover:scale-110 transition-transform duration-500"
+                                alt={country.name}
+                            />
+                            <h3 className="text-white font-black text-2xl tracking-tight" style={{ fontFamily: 'Playfair Display, serif' }}>{country.name}</h3>
                         </div>
-                        <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+                        <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors relative z-10">
                             <ArrowRight size={16} className="text-gold group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>
