@@ -133,20 +133,33 @@ export async function POST(req: Request) {
             return response.text();
         };
 
-        let responseText;
-        try {
-            // Try preferred model first
-            responseText = await runGeneration("gemini-2.0-flash");
-        } catch (error: any) {
-            // Check if it's a quota error (429) or model not found (404)
-            const isQuotaError = error.message?.includes("429") || error.message?.includes("quota");
+        // Cascade of models to try in order of preference/modernity
+        const modelsToTry = [
+            "gemini-2.0-flash",
+            "gemini-1.5-flash",
+            "gemini-1.5-flash-latest",
+            "gemini-1.5-pro",
+            "gemini-pro"
+        ];
 
-            if (isQuotaError) {
-                console.warn("Gemini 2.0 Quota exceeded, falling back to 1.5...");
-                responseText = await runGeneration("gemini-1.5-flash");
-            } else {
-                throw error; // Re-throw if it's a different kind of error
+        let responseText;
+        let lastError: any;
+
+        for (const modelName of modelsToTry) {
+            try {
+                responseText = await runGeneration(modelName);
+                if (responseText) break; // Success!
+            } catch (error: any) {
+                lastError = error;
+                const errorStatus = error.message || "";
+                console.warn(`Model ${modelName} failed (${errorStatus.substring(0, 50)}...). Trying next...`);
+                // Continue to the next model in the list
+                continue;
             }
+        }
+
+        if (!responseText) {
+            throw lastError || new Error("All models failed to respond.");
         }
 
         return NextResponse.json({ text: responseText });
