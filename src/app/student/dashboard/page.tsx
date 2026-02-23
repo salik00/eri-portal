@@ -54,7 +54,7 @@ export default function StudentDashboard() {
                 <Shield size={64} className="text-gold/20 mb-6" />
                 <h1 className="text-2xl font-bold text-white mb-2">Profile Not Linked</h1>
                 <p className="text-white/40 max-w-sm mb-8">
-                    Your account is registered but hasn't been linked to a student record yet.
+                    Your account is registered but hasn&apos;t been linked to a student record yet.
                     Please contact your counselor to activate your dashboard.
                 </p>
                 <button onClick={handleLogout} className="text-gold hover:underline">Sign Out</button>

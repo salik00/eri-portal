@@ -102,13 +102,16 @@ export async function POST(req: Request) {
 
         if (!process.env.GOOGLE_AI_API_KEY) {
             return NextResponse.json(
-                { message: "Demo Mode: Saathi is ready. Please set GOOGLE_AI_API_KEY to activate full intelligence." },
+                {
+                    message: "Demo Mode: Saathi is ready. Please set GOOGLE_AI_API_KEY to activate full intelligence.",
+                    demoMode: true
+                },
                 { status: 200 }
             );
         }
 
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash",
+            model: "gemini-1.5-flash",
             systemInstruction: SYSTEM_PROMPT
         });
 
@@ -140,7 +143,10 @@ export async function POST(req: Request) {
         // Return more specific error message if accessible
         const errorMessage = error.message || "I'm having a bit of trouble thinking right now.";
         return NextResponse.json(
-            { message: `${errorMessage} Could you try again in a moment? 😊` },
+            {
+                message: `${errorMessage} Could you try again in a moment? 😊`,
+                error: true
+            },
             { status: 500 }
         );
     }

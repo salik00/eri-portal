@@ -18,6 +18,8 @@ export default function SaathiBot() {
     ])
     const [input, setInput] = useState('')
     const [typing, setTyping] = useState(false)
+    const [isDemo, setIsDemo] = useState(false)
+    const [hasError, setHasError] = useState(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
     const scrollToBottom = () => {
@@ -45,12 +47,16 @@ export default function SaathiBot() {
 
             const data = await response.json()
 
+            if (data.demoMode) setIsDemo(true)
+            if (data.error) setHasError(true)
+
             setMessages(prev => [...prev, {
                 id: Date.now(),
                 text: data.text || data.message || "I'm here to help! Could you please repeat that? 😊",
                 isBot: true
             }])
         } catch (error) {
+            setHasError(true)
             setMessages(prev => [...prev, {
                 id: Date.now(),
                 text: "Mero connection ma sabaai problem bhayo. Please try again! 🙏",
@@ -108,7 +114,21 @@ export default function SaathiBot() {
                                 <div className="text-white text-base font-bold flex items-center gap-2">
                                     Saathi AI <Sparkles size={12} className="text-gold animate-pulse" />
                                 </div>
-                                <div className="text-white/50 text-xs">Enterprise AI Counselor</div>
+                                <div className="text-white/50 text-xs flex items-center gap-1.5">
+                                    {isDemo ? (
+                                        <span className="flex items-center gap-1 text-orange-400">
+                                            <span className="w-1.5 h-1.5 bg-orange-400 rounded-full animate-pulse" />
+                                            Demo Mode
+                                        </span>
+                                    ) : hasError ? (
+                                        <span className="flex items-center gap-1 text-rose-400">
+                                            <span className="w-1.5 h-1.5 bg-rose-400 rounded-full" />
+                                            Connection Issue
+                                        </span>
+                                    ) : (
+                                        "Enterprise AI Counselor"
+                                    )}
+                                </div>
                             </div>
                             <button onClick={() => setOpen(false)} className="text-white/40 hover:text-white transition-colors">
                                 <ChevronDown size={20} />

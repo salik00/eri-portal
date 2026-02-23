@@ -34,7 +34,7 @@ export default function AdminDashboard() {
             <div className="flex justify-between items-end">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight text-white mb-1">Command Center</h1>
-                    <p className="text-white/60 text-sm">Welcome back. Here's what's happening today.</p>
+                    <p className="text-white/60 text-sm">Welcome back. Here&apos;s what&apos;s happening today.</p>
                 </div>
                 <div className="hidden sm:flex gap-3">
                     <button

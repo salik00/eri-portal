@@ -6,7 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { login, signup } from './actions'
 import Link from 'next/link'
 
-export default function AuthPage() {
+import { Suspense } from 'react'
+
+function AuthContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const initialTab = searchParams.get('tab') === 'register' ? 'register' : 'login'
@@ -192,5 +194,17 @@ export default function AuthPage() {
                 </form>
             </motion.div>
         </div>
+    )
+}
+
+export default function AuthPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-oxford-blue flex items-center justify-center">
+                <Loader2 className="animate-spin text-gold" size={40} />
+            </div>
+        }>
+            <AuthContent />
+        </Suspense>
     )
 }

@@ -7,7 +7,7 @@ const FOOTER_COUNTRIES = ['USA', 'UK', 'Australia', 'Canada', 'Denmark', 'New Ze
 const FOOTER_LINKS = [
     { label: 'About ERI', href: '/#about' },
     { label: 'Course Finder', href: '/#course-finder' },
-    { label: 'Student Portal', href: '/dashboard' },
+    { label: 'Student Portal', href: '/student/dashboard' },
     { label: 'Admin Login', href: '/admin' },
     { label: 'Privacy Policy', href: '#' },
     { label: 'Terms of Service', href: '#' },

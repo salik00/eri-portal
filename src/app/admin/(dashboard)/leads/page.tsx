@@ -91,7 +91,7 @@ export default function LeadsPage() {
                                 </div>
                                 <div className="flex items-start gap-2 text-xs text-white/60">
                                     <MessageSquare size={14} className="text-gold/50 mt-0.5 shrink-0" />
-                                    <span className="line-clamp-2 italic">"{lead.message || 'No message provided'}"</span>
+                                    <span className="line-clamp-2 italic">&quot;{lead.message || 'No message provided'}&quot;</span>
                                 </div>
                             </div>
                             <button

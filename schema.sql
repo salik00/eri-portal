@@ -193,4 +193,28 @@ CREATE POLICY "Students can upload documents" ON public.documents
         EXISTS (SELECT 1 FROM public.students WHERE profile_id = auth.uid() AND id = student_id)
     );
 
--- End of Schema v1.2
+-- 8. ERI Portal Settings & Configuration
+CREATE TABLE IF NOT EXISTS public.settings (
+    id TEXT PRIMARY KEY DEFAULT 'global', -- Single row for global settings
+    agency_name TEXT DEFAULT 'Enlightened Research Institute',
+    contact_email TEXT DEFAULT 'info@enlightened.com.np',
+    office_address TEXT DEFAULT 'Putalisadak-28, Kathmandu, Nepal',
+    service_fee_npr NUMERIC DEFAULT 50000,
+    express_fee_npr NUMERIC DEFAULT 15000,
+    portal_enabled BOOLEAN DEFAULT true,
+    notifications_enabled BOOLEAN DEFAULT true,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Initial Settings Data
+INSERT INTO public.settings (id, agency_name, contact_email, office_address)
+VALUES ('global', 'Enlightened Research Institute', 'info@enlightened.com.np', 'Putalisadak-28, Kathmandu, Nepal')
+ON CONFLICT (id) DO NOTHING;
+
+-- Enable RLS for Settings
+ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view settings" ON public.settings FOR SELECT USING (true);
+CREATE POLICY "Admins can update settings" ON public.settings FOR UPDATE TO authenticated 
+    USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('superadmin', 'manager')));
+
+-- End of Schema v1.3
