@@ -133,13 +133,12 @@ export async function POST(req: Request) {
             return response.text();
         };
 
-        // Cascade of models to try in order of preference/modernity
+        // Cascade of models (2026 Edition) to try in order of preference
         const modelsToTry = [
+            "gemini-3-flash",
+            "gemini-2.5-flash",
             "gemini-2.0-flash",
-            "gemini-1.5-flash",
-            "gemini-1.5-flash-latest",
-            "gemini-1.5-pro",
-            "gemini-pro"
+            "gemini-1.5-flash-latest"
         ];
 
         let responseText;
