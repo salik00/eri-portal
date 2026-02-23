@@ -110,33 +110,46 @@ export async function POST(req: Request) {
             );
         }
 
-        const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash",
-            systemInstruction: SYSTEM_PROMPT
-        });
+        const runGeneration = async (modelName: string) => {
+            const model = genAI.getGenerativeModel({
+                model: modelName,
+                systemInstruction: SYSTEM_PROMPT
+            });
 
-        // Gemini history MUST alternate and start with 'user'.
-        // If the first message is from the bot, we skip it for the history object
-        // but it's already in the model's system instruction context if needed.
-        const history = messages.slice(0, -1)
-            .filter((msg: any, index: number) => {
-                // Ensure first message in history is 'user'
-                if (index === 0 && msg.isBot) return false;
-                return true;
-            })
-            .map((msg: any) => ({
-                role: msg.isBot ? "model" : "user",
-                parts: [{ text: msg.text }],
-            }));
+            const history = messages.slice(0, -1)
+                .filter((msg: any, index: number) => {
+                    if (index === 0 && msg.isBot) return false;
+                    return true;
+                })
+                .map((msg: any) => ({
+                    role: msg.isBot ? "model" : "user",
+                    parts: [{ text: msg.text }],
+                }));
 
-        const chat = model.startChat({ history });
+            const chat = model.startChat({ history });
+            const lastMessage = messages[messages.length - 1].text;
+            const result = await chat.sendMessage(lastMessage);
+            const response = await result.response;
+            return response.text();
+        };
 
-        const lastMessage = messages[messages.length - 1].text;
-        const result = await chat.sendMessage(lastMessage);
-        const response = await result.response;
-        const text = response.text();
+        let responseText;
+        try {
+            // Try preferred model first
+            responseText = await runGeneration("gemini-2.0-flash");
+        } catch (error: any) {
+            // Check if it's a quota error (429) or model not found (404)
+            const isQuotaError = error.message?.includes("429") || error.message?.includes("quota");
 
-        return NextResponse.json({ text });
+            if (isQuotaError) {
+                console.warn("Gemini 2.0 Quota exceeded, falling back to 1.5...");
+                responseText = await runGeneration("gemini-1.5-flash");
+            } else {
+                throw error; // Re-throw if it's a different kind of error
+            }
+        }
+
+        return NextResponse.json({ text: responseText });
     } catch (error: any) {
         console.error("Saathi API Error:", error);
 
